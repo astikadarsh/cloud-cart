@@ -1,4 +1,4 @@
-export default function CartItem({ item }) {
+export default function CartItem({ item, onRemove }) {
   return (
     <div className="flex items-center gap-4 border p-4 rounded-lg">
       <img
@@ -8,19 +8,21 @@ export default function CartItem({ item }) {
       />
 
       <div className="flex-1">
-        <h3 className="font-semibold text-gray-900">
+        <h3 className="font-semibold">
           {item.title}
         </h3>
-        <p className="text-gray-600 text-sm">
-          Quantity: {item.quantity}
-        </p>
+        <p>Quantity: {item.quantity}</p>
       </div>
 
       <div className="text-right">
-        <p className="font-semibold text-blue-600">
-          ₹{item.price}
+        <p className="text-blue-600 font-semibold">
+          ₹{item.price * item.quantity}
         </p>
-        <button className="text-sm text-red-500 hover:underline mt-1">
+
+        <button
+          onClick={() => onRemove(item.id)}
+          className="text-sm text-red-500 hover:underline mt-1"
+        >
           Remove
         </button>
       </div>
