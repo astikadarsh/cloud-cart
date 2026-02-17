@@ -1,11 +1,29 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
+
   const [cartItems, setCartItems] = useState([]);
+
+  // 🟢 Load cart from localStorage when app starts
+  useEffect(() => {
+    const storedCart = localStorage.getItem("cloudcart-cart");
+
+    if (storedCart) {
+      setCartItems(JSON.parse(storedCart));
+    }
+  }, []);
+
+  // 🟢 Save cart to localStorage whenever cart changes
+  useEffect(() => {
+    localStorage.setItem(
+      "cloudcart-cart",
+      JSON.stringify(cartItems)
+    );
+  }, [cartItems]);
 
   const addToCart = (product) => {
     setCartItems((prev) => {
