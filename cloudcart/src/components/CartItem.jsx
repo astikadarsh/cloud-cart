@@ -1,6 +1,7 @@
-export default function CartItem({ item, onRemove }) {
+export default function CartItem({ item, onRemove, onIncrease, onDecrease }) {
   return (
     <div className="flex items-center gap-4 border p-4 rounded-lg">
+      
       <img
         src={item.image}
         alt={item.title}
@@ -11,7 +12,28 @@ export default function CartItem({ item, onRemove }) {
         <h3 className="font-semibold">
           {item.title}
         </h3>
-        <p>Quantity: {item.quantity}</p>
+
+        {/* Quantity Controls */}
+        <div className="flex items-center gap-3 mt-2">
+
+          <button
+            onClick={() => onDecrease(item.id)}
+            className="px-2 py-1 border rounded"
+          >
+            -
+          </button>
+
+          <span>{item.quantity}</span>
+
+          <button
+            onClick={() => onIncrease(item.id)}
+            className="px-2 py-1 border rounded"
+          >
+            +
+          </button>
+
+        </div>
+
       </div>
 
       <div className="text-right">
@@ -26,6 +48,7 @@ export default function CartItem({ item, onRemove }) {
           Remove
         </button>
       </div>
+
     </div>
   );
 }

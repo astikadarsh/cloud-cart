@@ -6,7 +6,7 @@ import Button from "@/components/Button";
 
 export default function CartPage() {
 
-  const { cartItems, removeFromCart } = useCart();
+  const { cartItems, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
 
   const totalAmount = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -26,12 +26,14 @@ export default function CartPage() {
           <>
             <div className="space-y-4">
               {cartItems.map((item) => (
-                <CartItem
-                  key={item.id}
-                  item={item}
-                  onRemove={removeFromCart}
-                />
-              ))}
+  <CartItem
+    key={item.id}
+    item={item}
+    onRemove={removeFromCart}
+    onIncrease={increaseQuantity}
+    onDecrease={decreaseQuantity}
+  />
+))}
             </div>
 
             <div className="mt-6 flex justify-between border-t pt-4">

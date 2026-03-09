@@ -8,7 +8,7 @@ export function CartProvider({ children }) {
 
   const [cartItems, setCartItems] = useState([]);
 
-  // 🟢 Load cart from localStorage when app starts
+  //  Load cart from localStorage when app starts
   useEffect(() => {
     const storedCart = localStorage.getItem("cloudcart-cart");
 
@@ -17,7 +17,7 @@ export function CartProvider({ children }) {
     }
   }, []);
 
-  // 🟢 Save cart to localStorage whenever cart changes
+  //  Save cart to localStorage whenever cart changes
   useEffect(() => {
     localStorage.setItem(
       "cloudcart-cart",
@@ -49,10 +49,38 @@ export function CartProvider({ children }) {
     );
   };
 
+  const increaseQuantity = (id) => {
+  setCartItems((prev) =>
+    prev.map((item) =>
+      item.id === id
+        ? { ...item, quantity: item.quantity + 1 }
+        : item
+    )
+  );
+};
+
+const decreaseQuantity = (id) => {
+  setCartItems((prev) =>
+    prev
+      .map((item) =>
+        item.id === id
+          ? { ...item, quantity: item.quantity - 1 }
+          : item
+      )
+      .filter((item) => item.quantity > 0)
+  );
+};
+
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart }}
-    >
+  value={{
+    cartItems,
+    addToCart,
+    removeFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+  }}
+>
       {children}
     </CartContext.Provider>
   );

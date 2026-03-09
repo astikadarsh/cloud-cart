@@ -22,27 +22,43 @@ export default function Navbar() {
       </Link>
 
       {/* Search */}
-      <input
-        type="text"
-        placeholder="Search products..."
-        className="hidden md:block w-1/3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+      <div className="hidden md:flex w-1/3">
+
+        <input
+          type="text"
+          placeholder="Search products..."
+          className="w-full px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <button className="px-4 bg-blue-600 text-white rounded-r-md hover:bg-blue-700">
+          Search
+        </button>
+
+      </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4">
 
+        {/* Login */}
         <Link href="/login">
-          <span className="text-gray-700 hover:text-blue-600 cursor-pointer">
+          <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50">
             Login
-          </span>
+          </button>
         </Link>
 
+        {/* Signup */}
+        <Link href="/signup">
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+            Signup
+          </button>
+        </Link>
+
+        {/* Cart */}
         <Link href="/cart" className="relative">
           <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
             Cart
           </button>
 
-          {/* Cart Badge */}
           {totalItems > 0 && (
             <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
               {totalItems}
@@ -52,6 +68,7 @@ export default function Navbar() {
         </Link>
 
       </div>
+
     </nav>
   );
 }
