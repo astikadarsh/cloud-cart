@@ -1,5 +1,4 @@
 import Link from "next/link";
-
 export default function SellerDashboard() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -37,9 +36,13 @@ export default function SellerDashboard() {
           </button>
         </Link>
 
-        <button className="px-6 py-3 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50">
-          Manage Products
-        </button>
+        
+
+<Link href="/seller/products">
+  <button className="px-6 py-3 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50">
+    Manage Products
+  </button>
+</Link>
 
       </div>
 
