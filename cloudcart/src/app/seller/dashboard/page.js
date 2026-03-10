@@ -37,7 +37,7 @@ export default function SellerDashboard() {
           </button>
         </Link>
 
-        <button className="px-6 py-3 border border-gray-300 rounded-md hover:bg-gray-50">
+        <button className="px-6 py-3 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50">
           Manage Products
         </button>
 

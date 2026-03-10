@@ -38,7 +38,7 @@ export default function CheckoutPage() {
             />
             <input
               type="text"
-              placeholder="Hostel / Address"
+              placeholder="Address"
               className="w-full border px-4 py-2 rounded-md"
             />
             <input

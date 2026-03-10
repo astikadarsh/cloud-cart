@@ -53,6 +53,13 @@ export default function Navbar() {
           </button>
         </Link>
 
+        {/* Seller Dashboard */}
+        <Link href="/seller/dashboard">
+  <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50">
+    Seller Dashboard
+  </button>
+</Link>
+
         {/* Cart */}
         <Link href="/cart" className="relative">
           <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
