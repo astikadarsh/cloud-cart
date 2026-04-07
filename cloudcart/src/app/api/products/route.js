@@ -1,6 +1,20 @@
-import products from "@/data/products";
-import { NextResponse } from "next/server";
+import { dynamoDB } from "@/lib/aws";
+import { ScanCommand } from "@aws-sdk/lib-dynamodb";
 
 export async function GET() {
-  return NextResponse.json(products);
+  try {
+    const data = await dynamoDB.send(
+      new ScanCommand({
+        TableName: "CloudCartProducts",
+      })
+    );
+
+    return Response.json(data.Items);
+  } catch (error) {
+    console.error(error);
+    return Response.json(
+      { error: "Failed to fetch products" },
+      { status: 500 }
+    );
+  }
 }

@@ -1,7 +1,11 @@
-import products from "@/data/products";
+"use client";
+
+import { useEffect, useState } from "react";
 import ProductCard from "@/components/ProductCard";
 
 export default function Home() {
+  const [products, setProducts] = useState([]);
+
   const categories = [
     "Books",
     "Notes",
@@ -9,6 +13,16 @@ export default function Home() {
     "Electronics",
     "Hostel Essentials",
   ];
+
+  useEffect(() => {
+    async function fetchProducts() {
+      const res = await fetch("/api/products");
+      const data = await res.json();
+      setProducts(data);
+    }
+
+    fetchProducts();
+  }, []);
 
   return (
     <main className="bg-gray-50 min-h-screen px-6 py-6">

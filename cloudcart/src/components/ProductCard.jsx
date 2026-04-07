@@ -9,16 +9,19 @@ export default function ProductCard({ product }) {
         {/* Image */}
         <img
           src={product.image}
-          alt={product.title}
+          alt={product.name}   
           className="h-40 w-full object-cover"
         />
 
         {/* Content */}
         <div className="p-4">
-          <CategoryBadge text={product.category} />
+          {/* Optional: category (handle if missing) */}
+          {product.category && (
+            <CategoryBadge text={product.category} />
+          )}
 
           <h3 className="mt-2 font-semibold text-gray-900">
-            {product.title}
+            {product.name}   {/* fixed */}
           </h3>
 
           <p className="mt-1 text-blue-600 font-bold">
