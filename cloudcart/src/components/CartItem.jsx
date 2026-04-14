@@ -4,13 +4,13 @@ export default function CartItem({ item, onRemove, onIncrease, onDecrease }) {
       
       <img
         src={item.image}
-        alt={item.title}
+        alt={item.name}
         className="w-20 h-20 object-cover rounded-md"
       />
 
       <div className="flex-1">
         <h3 className="font-semibold">
-          {item.title}
+          {item.name}
         </h3>
 
         {/* Quantity Controls */}

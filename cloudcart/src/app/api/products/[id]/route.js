@@ -1,4 +1,5 @@
 import { GetCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand } from "@aws-sdk/lib-dynamodb";
 import { dynamoDB } from "@/lib/aws";
 
 export async function GET(req, { params }) {
@@ -22,5 +23,25 @@ export async function GET(req, { params }) {
   } catch (error) {
     console.error(error);
     return Response.json({ error: "Error fetching product" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req, { params }) {
+  try {
+    const { id } = await params;
+
+    const command = new DeleteCommand({
+      TableName: "CloudCartProducts",
+      Key: {
+        id: String(id),
+      },
+    });
+
+    await dynamoDB.send(command);
+
+    return Response.json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    return Response.json({ error: "Failed to delete product" }, { status: 500 });
   }
 }
