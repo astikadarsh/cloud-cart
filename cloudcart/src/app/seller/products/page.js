@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Button from "@/components/Button";
+import { useRouter } from "next/navigation";
 
 export default function ManageProductsPage() {
   const [products, setProducts] = useState([]);
+  const router = useRouter();
 
   //  Fetch products from API
   useEffect(() => {
@@ -35,6 +36,11 @@ export default function ManageProductsPage() {
     }
   }
 
+  //  Edit navigation
+  function handleEdit(id) {
+    router.push(`/seller/products/edit/${id}`);
+  }
+
   return (
     <main className="bg-gray-50 min-h-screen px-6 py-8">
       <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-sm p-6">
@@ -61,8 +67,14 @@ export default function ManageProductsPage() {
                   <td className="py-4">₹{product.price}</td>
 
                   <td className="py-4 flex gap-3">
-                    {/* Edit button (next step) */}
-                    <Button text="Edit" />
+                    
+                    {/*  Edit button */}
+                    <button
+                      onClick={() => handleEdit(product.id)}
+                      className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
+                    >
+                      Edit
+                    </button>
 
                     {/*  Delete button */}
                     <button
@@ -71,6 +83,7 @@ export default function ManageProductsPage() {
                     >
                       Delete
                     </button>
+
                   </td>
                 </tr>
               ))}
