@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function UploadProductPage() {
   const [product, setProduct] = useState({
@@ -13,8 +13,10 @@ export default function UploadProductPage() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
-  // handle input change
+  const fileInputRef = useRef(null);
+
   const handleChange = (e) => {
     setProduct({
       ...product,
@@ -22,7 +24,43 @@ export default function UploadProductPage() {
     });
   };
 
-  //  handle submit (POST API)
+  // 🔥 File Upload
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert("Image upload failed ❌");
+        return;
+      }
+
+      setProduct((prev) => ({
+        ...prev,
+        image: data.url,
+      }));
+
+      alert("Image uploaded ✅");
+    } catch (error) {
+      console.error(error);
+      alert("Upload error ❌");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -38,7 +76,7 @@ export default function UploadProductPage() {
           price: Number(product.price),
           description: product.description,
           image:
-            product.image || "https://via.placeholder.com/200", // fallback image
+            product.image || "https://via.placeholder.com/200",
         }),
       });
 
@@ -49,7 +87,6 @@ export default function UploadProductPage() {
 
       alert("Product added successfully ✅");
 
-      //  reset form
       setProduct({
         name: "",
         price: "",
@@ -74,7 +111,7 @@ export default function UploadProductPage() {
         </h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {/* Product Name */}
+          
           <div>
             <label className="block mb-1 font-medium">Product Name</label>
             <input
@@ -82,13 +119,11 @@ export default function UploadProductPage() {
               name="name"
               value={product.name}
               onChange={handleChange}
-              placeholder="Enter product name"
               className="w-full border border-gray-300 rounded-md p-2"
               required
             />
           </div>
 
-          {/* Price */}
           <div>
             <label className="block mb-1 font-medium">Price</label>
             <input
@@ -96,13 +131,11 @@ export default function UploadProductPage() {
               name="price"
               value={product.price}
               onChange={handleChange}
-              placeholder="Enter price"
               className="w-full border border-gray-300 rounded-md p-2"
               required
             />
           </div>
 
-          {/* Category (optional for now) */}
           <div>
             <label className="block mb-1 font-medium">Category</label>
             <input
@@ -110,12 +143,10 @@ export default function UploadProductPage() {
               name="category"
               value={product.category}
               onChange={handleChange}
-              placeholder="Example: Electronics"
               className="w-full border border-gray-300 rounded-md p-2"
             />
           </div>
 
-          {/* Stock */}
           <div>
             <label className="block mb-1 font-medium">Stock Quantity</label>
             <input
@@ -123,41 +154,60 @@ export default function UploadProductPage() {
               name="stock"
               value={product.stock}
               onChange={handleChange}
-              placeholder="Enter stock quantity"
               className="w-full border border-gray-300 rounded-md p-2"
             />
           </div>
 
-          {/* Description */}
           <div>
             <label className="block mb-1 font-medium">Description</label>
             <textarea
               name="description"
               value={product.description}
               onChange={handleChange}
-              placeholder="Write product description..."
               className="w-full border border-gray-300 rounded-md p-2"
               rows="4"
             />
           </div>
 
-          {/* Image URL (instead of file for now) */}
+          {/* 🔥 UPDATED IMAGE UPLOAD UI */}
           <div>
-            <label className="block mb-1 font-medium">Image URL</label>
+            <label className="block mb-2 font-medium">Upload Image</label>
+
+            {/* Hidden Input */}
             <input
-              type="text"
-              name="image"
-              value={product.image}
-              onChange={handleChange}
-              placeholder="Paste image URL"
-              className="w-full border border-gray-300 rounded-md p-2"
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              className="hidden"
             />
+
+            {/* Custom Button */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current.click()}
+              className="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900"
+            >
+              Choose Image
+            </button>
+
+            {uploading && (
+              <p className="text-sm text-gray-500 mt-2">
+                Uploading image...
+              </p>
+            )}
+
+            {product.image && (
+              <img
+                src={product.image}
+                alt="Preview"
+                className="mt-3 w-32 h-32 object-cover rounded-md border"
+              />
+            )}
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || uploading}
             className="mt-4 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
           >
             {loading ? "Uploading..." : "Upload Product"}
