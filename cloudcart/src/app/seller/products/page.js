@@ -2,15 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ManageProductsPage() {
   const [products, setProducts] = useState([]);
   const router = useRouter();
+  const { user } = useAuth();
 
-  //  Fetch products from API
+  //  ROLE BASED PROTECTION
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    if (!user) {
+      router.push("/login");
+    } else if (user.role !== "seller") {
+      router.push("/");
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user && user.role === "seller") {
+      fetchProducts();
+    }
+  }, [user]);
 
   async function fetchProducts() {
     try {
@@ -22,21 +34,18 @@ export default function ManageProductsPage() {
     }
   }
 
-  //  Delete product
   async function handleDelete(id) {
     try {
       await fetch(`/api/products/${id}`, {
         method: "DELETE",
       });
 
-      // Update UI instantly
       setProducts((prev) => prev.filter((p) => p.id !== id));
     } catch (error) {
       console.error("Delete failed:", error);
     }
   }
 
-  //  Edit navigation
   function handleEdit(id) {
     router.push(`/seller/products/edit/${id}`);
   }
@@ -58,37 +67,28 @@ export default function ManageProductsPage() {
 
             <tbody>
               {products.map((product) => (
-                <tr
-                  key={product.id}
-                  className="border-b hover:bg-gray-50"
-                >
+                <tr key={product.id} className="border-b hover:bg-gray-50">
                   <td className="py-4">{product.name}</td>
-
                   <td className="py-4">₹{product.price}</td>
 
                   <td className="py-4 flex gap-3">
-                    
-                    {/*  Edit button */}
                     <button
                       onClick={() => handleEdit(product.id)}
-                      className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
+                      className="px-4 py-2 bg-yellow-500 text-white rounded-md"
                     >
                       Edit
                     </button>
 
-                    {/*  Delete button */}
                     <button
                       onClick={() => handleDelete(product.id)}
-                      className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                      className="px-4 py-2 bg-red-500 text-white rounded-md"
                     >
                       Delete
                     </button>
-
                   </td>
                 </tr>
               ))}
 
-              {/* Empty state */}
               {products.length === 0 && (
                 <tr>
                   <td colSpan="3" className="py-6 text-center text-gray-500">

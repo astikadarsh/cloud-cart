@@ -1,83 +1,84 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
+  const router = useRouter();
+
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "customer",
+  });
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (form.password !== form.confirmPassword) {
+      alert("Passwords do not match ❌");
+      return;
+    }
+
+    const res = await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        role: form.role, //  added
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message);
+      return;
+    }
+
+    alert("Signup successful ✅");
+    router.push("/login");
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
-
         <h1 className="text-3xl font-bold text-center mb-6">
           Create CloudCart Account
         </h1>
 
-        <form className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
-          <div>
-            <label className="block mb-1 text-sm font-medium">
-              Name
-            </label>
+          <input name="name" placeholder="Name" onChange={handleChange} className="border p-2 rounded" />
 
-            <input
-              type="text"
-              placeholder="Enter your name"
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <input name="email" type="email" placeholder="Email" onChange={handleChange} className="border p-2 rounded" />
 
-          <div>
-            <label className="block mb-1 text-sm font-medium">
-              Email
-            </label>
+          <input name="password" type="password" placeholder="Password" onChange={handleChange} className="border p-2 rounded" />
 
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <input name="confirmPassword" type="password" placeholder="Confirm Password" onChange={handleChange} className="border p-2 rounded" />
 
-          <div>
-            <label className="block mb-1 text-sm font-medium">
-              Password
-            </label>
+          <select name="role" onChange={handleChange} className="border p-2 rounded">
+            <option value="customer">Customer</option>
+            <option value="seller">Seller</option>
+          </select>
 
-            <input
-              type="password"
-              placeholder="Create a password"
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1 text-sm font-medium">
-              Confirm Password
-            </label>
-
-            <input
-              type="password"
-              placeholder="Confirm your password"
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1 text-sm font-medium">
-              Account Type
-            </label>
-
-            <select className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="customer">Customer</option>
-              <option value="seller">Seller</option>
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-          >
+          <button className="bg-blue-600 text-white py-2 rounded-lg">
             Create Account
           </button>
-
         </form>
 
         <p className="text-sm text-center mt-6">
@@ -86,9 +87,7 @@ export default function SignupPage() {
             Login
           </Link>
         </p>
-
       </div>
-
     </div>
   );
 }
