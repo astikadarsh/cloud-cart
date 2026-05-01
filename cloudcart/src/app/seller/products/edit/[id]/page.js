@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { protectSeller } from "@/utils/protectSellerRoute";
 
 export default function EditProductPage({ params }) {
   const router = useRouter();
+  const { user } = useAuth();
 
   const [form, setForm] = useState({
     name: "",
@@ -15,10 +18,19 @@ export default function EditProductPage({ params }) {
 
   const [loading, setLoading] = useState(true);
 
-  //  fetch existing product
+  //  PROTECT ROUTE
+  useEffect(() => {
+    protectSeller(user, router);
+  }, [user]);
+
+  //  prevent UI flash
+  if (!user || user.role !== "seller") return null;
+
+  // fetch existing product
   useEffect(() => {
     async function fetchProduct() {
       const resolvedParams = await params;
+
       const res = await fetch(`/api/products/${resolvedParams.id}`);
       const data = await res.json();
 
@@ -32,10 +44,11 @@ export default function EditProductPage({ params }) {
       setLoading(false);
     }
 
-    fetchProduct();
-  }, [params]);
+    if (user && user.role === "seller") {
+      fetchProduct();
+    }
+  }, [params, user]);
 
-  //  handle change
   function handleChange(e) {
     setForm({
       ...form,
@@ -43,7 +56,6 @@ export default function EditProductPage({ params }) {
     });
   }
 
-  //  update product
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -61,8 +73,7 @@ export default function EditProductPage({ params }) {
     });
 
     alert("Product updated ✅");
-
-    router.push("/seller/products"); // redirect back
+    router.push("/seller/products");
   }
 
   if (loading) return <p className="p-6">Loading...</p>;

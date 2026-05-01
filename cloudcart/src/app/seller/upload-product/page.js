@@ -1,8 +1,14 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { protectSeller } from "@/utils/protectSellerRoute";
 
 export default function UploadProductPage() {
+  const { user } = useAuth();
+  const router = useRouter();
+
   const [product, setProduct] = useState({
     name: "",
     price: "",
@@ -17,6 +23,14 @@ export default function UploadProductPage() {
 
   const fileInputRef = useRef(null);
 
+  //  ROLE PROTECTION
+  useEffect(() => {
+    protectSeller(user, router);
+  }, [user]);
+
+  //  prevent UI flash
+  if (!user || user.role !== "seller") return null;
+
   const handleChange = (e) => {
     setProduct({
       ...product,
@@ -24,7 +38,7 @@ export default function UploadProductPage() {
     });
   };
 
-  // 🔥 File Upload
+  //  File Upload
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -169,11 +183,10 @@ export default function UploadProductPage() {
             />
           </div>
 
-          {/* 🔥 UPDATED IMAGE UPLOAD UI */}
+          {/* IMAGE UPLOAD */}
           <div>
             <label className="block mb-2 font-medium">Upload Image</label>
 
-            {/* Hidden Input */}
             <input
               type="file"
               ref={fileInputRef}
@@ -181,7 +194,6 @@ export default function UploadProductPage() {
               className="hidden"
             />
 
-            {/* Custom Button */}
             <button
               type="button"
               onClick={() => fileInputRef.current.click()}

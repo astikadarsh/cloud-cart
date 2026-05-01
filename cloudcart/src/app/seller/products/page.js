@@ -3,19 +3,16 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { protectSeller } from "@/utils/protectSellerRoute";
 
 export default function ManageProductsPage() {
   const [products, setProducts] = useState([]);
   const router = useRouter();
   const { user } = useAuth();
 
-  //  ROLE BASED PROTECTION
+  // 🔥 CLEAN PROTECTION
   useEffect(() => {
-    if (!user) {
-      router.push("/login");
-    } else if (user.role !== "seller") {
-      router.push("/");
-    }
+    if (!protectSeller(user, router)) return;
   }, [user]);
 
   useEffect(() => {
@@ -49,6 +46,9 @@ export default function ManageProductsPage() {
   function handleEdit(id) {
     router.push(`/seller/products/edit/${id}`);
   }
+
+  //  prevent flash
+  if (!user || user.role !== "seller") return null;
 
   return (
     <main className="bg-gray-50 min-h-screen px-6 py-8">

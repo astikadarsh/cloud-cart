@@ -1,5 +1,22 @@
+"use client";
+
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { protectSeller } from "@/utils/protectSellerRoute";
+
 export default function SellerDashboard() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    protectSeller(user, router);
+  }, [user]);
+
+  //  prevent UI flash
+  if (!user || user.role !== "seller") return null;
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
 
@@ -36,13 +53,11 @@ export default function SellerDashboard() {
           </button>
         </Link>
 
-        
-
-<Link href="/seller/products">
-  <button className="px-6 py-3 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50">
-    Manage Products
-  </button>
-</Link>
+        <Link href="/seller/products">
+          <button className="px-6 py-3 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50">
+            Manage Products
+          </button>
+        </Link>
 
       </div>
 

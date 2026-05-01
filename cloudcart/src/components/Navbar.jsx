@@ -31,6 +31,7 @@ export default function Navbar() {
 
       <div className="flex items-center gap-4">
 
+        {/* AUTH */}
         {user ? (
           <>
             <span className="text-sm font-medium">
@@ -60,11 +61,14 @@ export default function Navbar() {
           </>
         )}
 
-        <Link href="/seller/dashboard">
-          <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md">
-            Seller Dashboard
-          </button>
-        </Link>
+        {/*  SHOW ONLY TO SELLER */}
+        {user?.role === "seller" && (
+          <Link href="/seller/dashboard">
+            <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md">
+              Seller Dashboard
+            </button>
+          </Link>
+        )}
 
         <Link href="/cart" className="relative">
           <button className="px-4 py-2 bg-blue-600 text-white rounded-md">
