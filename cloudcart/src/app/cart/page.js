@@ -4,15 +4,66 @@ import { useCart } from "@/context/CartContext";
 import CartItem from "@/components/CartItem";
 import Button from "@/components/Button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
+  const router = useRouter();
 
-  const { cartItems, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
+  const {
+    cartItems,
+    removeFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+    setCartItems, //  needed to clear cart
+  } = useCart();
 
   const totalAmount = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  //  CHECKOUT FUNCTION
+  const handleCheckout = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      if (!user) {
+        alert("Please login first ❌");
+        router.push("/login");
+        return;
+      }
+
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: cartItems,
+          userEmail: user.email,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message);
+        return;
+      }
+
+      alert("Order placed successfully ✅");
+
+      //  clear cart
+      setCartItems([]);
+
+      //  redirect
+      router.push("/order-success");
+
+    } catch (error) {
+      console.error(error);
+      alert("Checkout failed ❌");
+    }
+  };
 
   if (cartItems.length === 0) {
     return (
@@ -32,7 +83,6 @@ export default function CartPage() {
 
   return (
     <main className="bg-gray-50 min-h-screen px-6 py-8">
-
       <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
 
         {/* Cart Items */}
@@ -81,15 +131,18 @@ export default function CartPage() {
           </div>
 
           <div className="mt-6">
-            <Link href="/checkout">
-              <Button text="Proceed to Checkout" />
-            </Link>
+            {/*  UPDATED BUTTON */}
+            <button
+              onClick={handleCheckout}
+              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+            >
+              Place Order
+            </button>
           </div>
 
         </div>
 
       </div>
-
     </main>
   );
 }
