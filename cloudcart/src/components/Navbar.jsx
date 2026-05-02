@@ -16,19 +16,26 @@ export default function Navbar() {
   return (
     <nav className="w-full bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
 
+      {/* Logo */}
       <Link href="/">
         <h1 className="text-2xl font-bold text-blue-600 cursor-pointer">
           CloudCart
         </h1>
       </Link>
 
+      {/* Search */}
       <div className="hidden md:flex w-1/3">
-        <input className="w-full px-4 py-2 border border-gray-300 rounded-l-md" />
-        <button className="px-4 bg-blue-600 text-white rounded-r-md">
+        <input
+          type="text"
+          placeholder="Search products..."
+          className="w-full px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button className="px-4 bg-blue-600 text-white rounded-r-md hover:bg-blue-700">
           Search
         </button>
       </div>
 
+      {/* Actions */}
       <div className="flex items-center gap-4">
 
         {/* AUTH */}
@@ -40,7 +47,7 @@ export default function Navbar() {
 
             <button
               onClick={logout}
-              className="px-4 py-2 border border-red-500 text-red-500 rounded-md"
+              className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50"
             >
               Logout
             </button>
@@ -48,35 +55,45 @@ export default function Navbar() {
         ) : (
           <>
             <Link href="/login">
-              <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md">
+              <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50">
                 Login
               </button>
             </Link>
 
             <Link href="/signup">
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-md">
+              <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
                 Signup
               </button>
             </Link>
           </>
         )}
 
-        {/*  SHOW ONLY TO SELLER */}
+        {/*  CUSTOMER ONLY */}
+        {user?.role === "customer" && (
+          <Link href="/orders">
+            <button className="px-4 py-2 border border-green-600 text-green-600 rounded-md hover:bg-green-50">
+              My Orders
+            </button>
+          </Link>
+        )}
+
+        {/*  SELLER ONLY */}
         {user?.role === "seller" && (
           <Link href="/seller/dashboard">
-            <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md">
+            <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50">
               Seller Dashboard
             </button>
           </Link>
         )}
 
+        {/* Cart */}
         <Link href="/cart" className="relative">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-md">
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
             Cart
           </button>
 
           {totalItems > 0 && (
-            <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-2 rounded-full">
+            <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
               {totalItems}
             </span>
           )}

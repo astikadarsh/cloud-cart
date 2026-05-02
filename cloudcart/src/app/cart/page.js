@@ -2,7 +2,6 @@
 
 import { useCart } from "@/context/CartContext";
 import CartItem from "@/components/CartItem";
-import Button from "@/components/Button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -14,7 +13,6 @@ export default function CartPage() {
     removeFromCart,
     increaseQuantity,
     decreaseQuantity,
-    setCartItems, //  needed to clear cart
   } = useCart();
 
   const totalAmount = cartItems.reduce(
@@ -22,47 +20,17 @@ export default function CartPage() {
     0
   );
 
-  //  CHECKOUT FUNCTION
-  const handleCheckout = async () => {
-    try {
-      const user = JSON.parse(localStorage.getItem("user"));
+  //  NEW: Go to checkout instead of placing order
+  const handleCheckout = () => {
+    const user = JSON.parse(localStorage.getItem("user"));
 
-      if (!user) {
-        alert("Please login first ❌");
-        router.push("/login");
-        return;
-      }
-
-      const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          items: cartItems,
-          userEmail: user.email,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message);
-        return;
-      }
-
-      alert("Order placed successfully ✅");
-
-      //  clear cart
-      setCartItems([]);
-
-      //  redirect
-      router.push("/order-success");
-
-    } catch (error) {
-      console.error(error);
-      alert("Checkout failed ❌");
+    if (!user) {
+      alert("Please login first ❌");
+      router.push("/login");
+      return;
     }
+
+    router.push("/checkout");
   };
 
   if (cartItems.length === 0) {
@@ -136,7 +104,7 @@ export default function CartPage() {
               onClick={handleCheckout}
               className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
             >
-              Place Order
+              Proceed to Checkout
             </button>
           </div>
 
